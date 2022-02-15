@@ -147,8 +147,6 @@ operationsmysql:
     AWS_ACCESS_KEY: "xxx"
     AWS_SECRET_KEY: "xxx"
     image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-channel"
-    ams:
-      groups: ""
     ingress:
       enabled: false
       annotations: 
@@ -629,7 +627,6 @@ operations_app:
     deployment:
       annotations:
         co.elastic.logs/enabled: "true"
-
   wildcardhostname: "*.test.oneacrefund.org"
 
   tls: "oafqa-tls"
