@@ -173,7 +173,7 @@ ph-ee-engine:
     tenants: "oaf"
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "paymenthub.test.oneacrefund.org"
-    image: "oaftech.azurecr.io/phee-ns/ph-ee-operations-app"
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-operations-app:1.0.0"
     datasource:
       username: "mifos"
       password: "password"
@@ -305,7 +305,7 @@ ph-ee-engine:
   notifications:
     enabled: true
     SPRING_PROFILES_ACTIVE: "bb"
-    image: "oaftech.azurecr.io/phee-ns/ph-ee-notifications"
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-notifications:1.0.0"
     hostname: "paymenthub.qa.oneacrefund.org"
     zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
     MESSAGEGATEWAYCONFIG_HOST: "message-gateway"
