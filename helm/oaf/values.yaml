@@ -330,7 +330,7 @@ ph-ee-engine:
 
 
   zeebe_ops:
-    enabled: true
+    enabled: false
     image: "oaftech.azurecr.io/phee-ns/phee-zeebe-ops"
     hostname: "paymenthub.qa.oneacrefund.org"
     zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
