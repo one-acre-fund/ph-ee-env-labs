@@ -69,7 +69,6 @@ kibana:
 elasticsearch:
   enabled: true
   replicas: 1
-  imageTag: 7.16.3
   minimumMasterNodes: 1
 
   #Single Node Solution
@@ -101,7 +100,6 @@ elasticsearch:
       memory: "1024M"
   volumeClaimTemplate:
     accessModes: [ "ReadWriteOnce" ]
-    storageClassName: "oaf-storage"
     resources:
       requests:
         cpu: "100m"

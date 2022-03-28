@@ -27,7 +27,7 @@ steps:
       command: package
       chartPath: $(System.DefaultWorkingDirectory)/helm/oaf
       destination: $(Build.ArtifactStagingDirectory)
-      updatedependency: false
+      updatedependency: true
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Helm chart
