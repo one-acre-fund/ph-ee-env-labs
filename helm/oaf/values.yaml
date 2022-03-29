@@ -390,7 +390,7 @@ operations_app:
         schema: "tenants"
       LOGGING_LEVEL_ROOT: "INFO"
       ingress:
-        enabled: true
+        enabled: false
         annotations: 
           kubernetes.io/ingress.class: "kong"
           konghq.com/strip-path: "true"
