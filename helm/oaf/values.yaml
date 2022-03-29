@@ -46,25 +46,25 @@ ph-ee-engine:
         enabled: true
         secretName: oafqa-tls
 
-kibana:
-  enabled: true
-  imageTag: 7.16.3
-  ingress:
-    enabled: false
-    className: "nginx"
-    pathtype: ImplementationSpecific
-    hosts:
-      - host: ph-kibana.test.oneacrefund.org
-        paths:
-          - path: /
-    tls: 
-      - secretName: oafqa-tls
-        hosts:
-          - "*.test.oneacrefund.org"
-  kibanaConfig:
-    kibana.yml: |
-      monitoring.enabled: false
-      
+  kibana:
+    enabled: true
+    imageTag: 7.16.3
+    ingress:
+      enabled: false
+      className: "nginx"
+      pathtype: ImplementationSpecific
+      hosts:
+        - host: ph-kibana.test.oneacrefund.org
+          paths:
+            - path: /
+      tls: 
+        - secretName: oafqa-tls
+          hosts:
+            - "*.test.oneacrefund.org"
+    kibanaConfig:
+      kibana.yml: |
+        monitoring.enabled: false
+        
 
   elasticsearch:
     enabled: true
@@ -72,35 +72,26 @@ kibana:
     minimumMasterNodes: 1
     imageTag: 7.16.3
 
-  #Single Node Solution
-  clusterHealthCheckParams: "wait_for_status=yellow&timeout=100s" 
-  master:
-    readinessProbe:
-      httpGet:
-        path: /_cluster/health?wait_for_status=yellow&timeout=5s
-        port: 9200
-      initialDelaySeconds: 30
-  data:
-    readinessProbe:
-      httpGet:
-        path: /_cluster/health?wait_for_status=yellow&timeout=5s
-        port: 9200
-      initialDelaySeconds: 30
+    #Single Node Solution
+    clusterHealthCheckParams: "wait_for_status=yellow&timeout=100s" 
+    master:
+      readinessProbe:
+        httpGet:
+          path: /_cluster/health?wait_for_status=yellow&timeout=5s
+          port: 9200
+        initialDelaySeconds: 30
+    data:
+      readinessProbe:
+        httpGet:
+          path: /_cluster/health?wait_for_status=yellow&timeout=5s
+          port: 9200
+        initialDelaySeconds: 30
 
 
-  # Shrink default JVM heap.
-  esJavaOpts: "-Xmx512m -Xms512m"
+    # Shrink default JVM heap.
+    esJavaOpts: "-Xmx512m -Xms512m"
 
-  # Allocate smaller chunks of memory per pod.
-  resources:
-    requests:
-      cpu: "200m"
-      memory: "1024M"
-    limits:
-      cpu: "1000m"
-      memory: "1024M"
-  volumeClaimTemplate:
-    accessModes: [ "ReadWriteOnce" ]
+    # Allocate smaller chunks of memory per pod.
     resources:
       requests:
         cpu: "100m"
@@ -115,18 +106,18 @@ kibana:
         requests:
           storage: 10Gi
 
-operations:
-  enabled: true
+  operations:
+    enabled: true
 
-kafka:
-  enabled: true
-  image: "spotify/kafka"
-  advertised:
-    host: "kafka"
-    port: "9092"
-  deployment:
-    annotations: 
-      deployTime: "{{ .Values.deployTime }}"
+  kafka:
+    enabled: true
+    image: "spotify/kafka"
+    advertised:
+      host: "kafka"
+      port: "9092"
+    deployment:
+      annotations: 
+        deployTime: "{{ .Values.deployTime }}"
 
 operationsmysql:
   fullnameOverride: "operationsmysql"
@@ -620,25 +611,8 @@ operations_app:
         co.elastic.logs/enabled: "true"
 
 
-zeebe_ops:
-  enabled: false
-  image: "oaftech.azurecr.io/phee-ns/phee-zeebe-ops"
-  hostname: "paymenthub.qa.oneacrefund.org"
-  zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
-  ingress:
-    enabled: false
-    annotations: 
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/strip-path: "true"
-    backend:
-      service:
-        name: ph-ee-zeebe-ops
-        port:
-          number: 80
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
-      deployTime: "{{ .Values.deployTime }}"
+  importer_es:
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-es"
 
   importer_rdbms:
     enabled: true
@@ -655,24 +629,6 @@ zeebe_ops:
         co.elastic.logs/enabled: "true"
   wildcardhostname: "*.test.oneacrefund.org"
 
+  wildcardhostname: "*.test.oneacrefund.org"
 
-importer_es:
-  image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-es"
-
-importer_rdbms:
-  enabled: true
-  image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-rdbms"
-  LOGGING_LEVEL_ROOT: "INFO"
-  datasource:
-    username: "mifos"
-    password: "password"
-    host: "operationsmysql"
-    port: 3306
-    schema: "tenants"
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
-
-wildcardhostname: "*.test.oneacrefund.org"
-
-tls: "oafqa-tls"
+  tls: "oafqa-tls"
