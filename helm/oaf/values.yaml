@@ -377,32 +377,32 @@ operations_app:
       co.elastic.logs/enabled: "true"
       deployTime: "{{ .Values.deployTime }}"
 
-    operations_app:
-      tenants: "oaf"
-      SPRING_PROFILES_ACTIVE: "bb"
-      hostname: "paymenthub.qa.oneacrefund.org"
-      image: "oaftech.azurecr.io/phee-ns/ph-ee-operations-app"
-      datasource:
-        username: "mifos"
-        password: "password"
-        host: "operationsmysql"
-        port: 3306
-        schema: "tenants"
-      LOGGING_LEVEL_ROOT: "INFO"
-      ingress:
-        enabled: false
-        annotations: 
-          kubernetes.io/ingress.class: "kong"
-          konghq.com/strip-path: "true"
-        backend:
-          service:
-            name: ph-ee-operations-app
-            port:
-              number: 80
-      deployment:
-        annotations:
-          co.elastic.logs/enabled: "true"
-          deployTime: "{{ .Values.deployTime }}"
+  operations_app:
+    tenants: "oaf"
+    SPRING_PROFILES_ACTIVE: "bb"
+    hostname: "paymenthub.qa.oneacrefund.org"
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-operations-app"
+    datasource:
+      username: "mifos"
+      password: "password"
+      host: "operationsmysql"
+      port: 3306
+      schema: "tenants"
+    LOGGING_LEVEL_ROOT: "INFO"
+    ingress:
+      enabled: false
+      annotations: 
+        kubernetes.io/ingress.class: "kong"
+        konghq.com/strip-path: "true"
+      backend:
+        service:
+          name: ph-ee-operations-app
+          port:
+            number: 80
+    deployment:
+      annotations:
+        co.elastic.logs/enabled: "true"
+        deployTime: "{{ .Values.deployTime }}"
 
   operations_web:
     SPRING_PROFILES_ACTIVE: "bb"
