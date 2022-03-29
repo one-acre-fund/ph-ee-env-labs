@@ -46,60 +46,52 @@ ph-ee-engine:
         enabled: true
         secretName: oafqa-tls
 
-kibana:
-  enabled: true
-  imageTag: 7.16.3
-  ingress:
-    enabled: false
-    className: "nginx"
-    pathtype: ImplementationSpecific
-    hosts:
-      - host: ph-kibana.test.oneacrefund.org
-        paths:
-          - path: /
-    tls: 
-      - secretName: oafqa-tls
-        hosts:
-          - "*.test.oneacrefund.org"
-  kibanaConfig:
-    kibana.yml: |
-      monitoring.enabled: false
-      
+  kibana:
+    enabled: true
+    imageTag: 7.16.3
+    ingress:
+      enabled: false
+      className: "nginx"
+      pathtype: ImplementationSpecific
+      hosts:
+        - host: ph-kibana.test.oneacrefund.org
+          paths:
+            - path: /
+      tls: 
+        - secretName: oafqa-tls
+          hosts:
+            - "*.test.oneacrefund.org"
+    kibanaConfig:
+      kibana.yml: |
+        monitoring.enabled: false
+        
 
-elasticsearch:
-  enabled: true
-  replicas: 1
-  minimumMasterNodes: 1
+  elasticsearch:
+    enabled: true
+    replicas: 1
+    minimumMasterNodes: 1
+    imageTag: 7.16.3
 
-  #Single Node Solution
-  clusterHealthCheckParams: "wait_for_status=yellow&timeout=100s" 
-  master:
-    readinessProbe:
-      httpGet:
-        path: /_cluster/health?wait_for_status=yellow&timeout=5s
-        port: 9200
-      initialDelaySeconds: 30
-  data:
-    readinessProbe:
-      httpGet:
-        path: /_cluster/health?wait_for_status=yellow&timeout=5s
-        port: 9200
-      initialDelaySeconds: 30
+    #Single Node Solution
+    clusterHealthCheckParams: "wait_for_status=yellow&timeout=100s" 
+    master:
+      readinessProbe:
+        httpGet:
+          path: /_cluster/health?wait_for_status=yellow&timeout=5s
+          port: 9200
+        initialDelaySeconds: 30
+    data:
+      readinessProbe:
+        httpGet:
+          path: /_cluster/health?wait_for_status=yellow&timeout=5s
+          port: 9200
+        initialDelaySeconds: 30
 
 
-  # Shrink default JVM heap.
-  esJavaOpts: "-Xmx512m -Xms512m"
+    # Shrink default JVM heap.
+    esJavaOpts: "-Xmx512m -Xms512m"
 
-  # Allocate smaller chunks of memory per pod.
-  resources:
-    requests:
-      cpu: "200m"
-      memory: "1024M"
-    limits:
-      cpu: "1000m"
-      memory: "1024M"
-  volumeClaimTemplate:
-    accessModes: [ "ReadWriteOnce" ]
+    # Allocate smaller chunks of memory per pod.
     resources:
       requests:
         cpu: "100m"
@@ -114,18 +106,18 @@ elasticsearch:
         requests:
           storage: 10Gi
 
-operations:
-  enabled: true
+  operations:
+    enabled: true
 
-kafka:
-  enabled: true
-  image: "spotify/kafka"
-  advertised:
-    host: "kafka"
-    port: "9092"
-  deployment:
-    annotations: 
-      deployTime: "{{ .Values.deployTime }}"
+  kafka:
+    enabled: true
+    image: "spotify/kafka"
+    advertised:
+      host: "kafka"
+      port: "9092"
+    deployment:
+      annotations: 
+        deployTime: "{{ .Values.deployTime }}"
 
 operationsmysql:
   fullnameOverride: "operationsmysql"
@@ -385,179 +377,206 @@ operations_app:
       co.elastic.logs/enabled: "true"
       deployTime: "{{ .Values.deployTime }}"
 
-operations_web:
-  SPRING_PROFILES_ACTIVE: "bb"
-  hostname: "ph-web.test.oneacrefund.org"
-  webhost: "ph-web.test.oneacrefund.org"
-  path: "/"
-  image: "oaftech.azurecr.io/phee-ns/ops-web"
-  ingress:
+    operations_app:
+      tenants: "oaf"
+      SPRING_PROFILES_ACTIVE: "bb"
+      hostname: "paymenthub.qa.oneacrefund.org"
+      image: "oaftech.azurecr.io/phee-ns/ph-ee-operations-app"
+      datasource:
+        username: "mifos"
+        password: "password"
+        host: "operationsmysql"
+        port: 3306
+        schema: "tenants"
+      LOGGING_LEVEL_ROOT: "INFO"
+      ingress:
+        enabled: true
+        annotations: 
+          kubernetes.io/ingress.class: "kong"
+          konghq.com/strip-path: "true"
+        backend:
+          service:
+            name: ph-ee-operations-app
+            port:
+              number: 80
+      deployment:
+        annotations:
+          co.elastic.logs/enabled: "true"
+          deployTime: "{{ .Values.deployTime }}"
+
+  operations_web:
+    SPRING_PROFILES_ACTIVE: "bb"
+    hostname: "ph-web.test.oneacrefund.org"
+    webhost: "ph-web.test.oneacrefund.org"
+    path: "/"
+    image: "oaftech.azurecr.io/phee-ns/ops-web"
+    ingress:
+      enabled: false
+      annotations:
+        kubernetes.io/ingress.class: "nginx"
+      backend:
+        service:
+          name: ph-ee-operations-web
+          port:
+            number: 4200
+    deployment:
+      annotations:
+        co.elastic.logs/enabled: "true"
+
+  identity:
+    hostname: "ops-bk.ibank.financial"
+    ingress:
+      enabled: false
+      annotations: 
+        kubernetes.io/ingress.class: "kong"
+        konghq.com/strip-path: "true"
+
+  mpesa:
+    tenant: "oaf"
+    enabled: true
+    SPRING_PROFILES_ACTIVE: "bb"
+    hostname: "paymenthub.qa.oneacrefund.org"
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-mpesa"
+    zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
+    business_short_code: "668158"
+    till_number: "9347335"
+    callback_host: "https://paymenthub.test.oneacrefund.org/mpesa"
+    retry_count: 3
+    safaricom:
+      auth_host: "https://api.safaricom.co.ke/oauth/v1/generate"
+      api_host: "https://api.safaricom.co.ke"
+    secret:
+      value:
+        client_key: "0pLxbN83FrOl5Nd0Fh9Zi5BQlMxSL2n5"
+        client_secret: "YzuGNoJxeub8ZC6d"
+        pass_key: "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+    LOGGING_LEVEL_ROOT: "INFO"
+    ingress:
+      enabled: false
+      annotations: 
+        kubernetes.io/ingress.class: "kong"
+        konghq.com/strip-path: "true"
+      backend:
+        service:
+          name: ph-ee-connector-mpesa
+          port:
+            number: 80
+    deployment:
+      annotations:
+        co.elastic.logs/enabled: "true"
+        deployTime: "{{ .Values.deployTime }}"
+
+  roster_connector:
+    enabled: true
+    SPRING_PROFILES_ACTIVE: "bb"
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-ams-pesa"
+    pesacore:
+      base_url: "https://qaoperations01.oneacrefund.org"
+      auth_header: "PaymentHubTest"
+    LOGGING_LEVEL_ROOT: "INFO"
+    ams:
+      local:
+        enabled: true
+    deployment:
+      annotations:
+        co.elastic.logs/enabled: "true"
+        deployTime: "{{ .Values.deployTime }}"
+
+  notifications:
+    enabled: true
+    SPRING_PROFILES_ACTIVE: "bb"
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-notifications:1.0.0"
+    hostname: "paymenthub.qa.oneacrefund.org"
+    zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
+    MESSAGEGATEWAYCONFIG_HOST: "message-gateway"
+    NOTIFICATION_LOCAL_HOST: "ph-ee-connector-notifications"
+    NOTIFICATION_SUCCESS_ENABLED: "false"
+    NOTIFICATION_FAILURE_ENABLED: "true"
+    LOGGING_LEVEL_ROOT: "INFO"
+    ingress:
+      enabled: false
+      annotations: 
+        kubernetes.io/ingress.class: "kong"
+        konghq.com/strip-path: "true"
+      backend:
+        service:
+          name: ph-ee-connector-notifications
+          port:
+            number: 80
+    deployment:
+      annotations:
+        co.elastic.logs/enabled: "true"
+        deployTime: "{{ .Values.deployTime }}"
+
+
+  zeebe_ops:
     enabled: false
-    annotations:
-      kubernetes.io/ingress.class: "nginx"
-    backend:
-      service:
-        name: ph-ee-operations-web
-        port:
-          number: 4200
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
+    image: "oaftech.azurecr.io/phee-ns/phee-zeebe-ops"
+    hostname: "paymenthub.qa.oneacrefund.org"
+    zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
+    ingress:
+      enabled: false
+      annotations: 
+        kubernetes.io/ingress.class: "kong"
+        konghq.com/strip-path: "true"
+      backend:
+        service:
+          name: ph-ee-zeebe-ops
+          port:
+            number: 80
+    deployment:
+      annotations:
+        co.elastic.logs/enabled: "true"
+        deployTime: "{{ .Values.deployTime }}"
 
-identity:
-  hostname: "ops-bk.ibank.financial"
-  ingress:
-    enabled: false
-    annotations: 
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/strip-path: "true"
-
-mpesa:
-  tenant: "oaf"
-  enabled: true
-  SPRING_PROFILES_ACTIVE: "bb"
-  hostname: "paymenthub.qa.oneacrefund.org"
-  image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-mpesa"
-  zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
-  business_short_code: "668158"
-  till_number: "9347335"
-  callback_host: "https://paymenthub.test.oneacrefund.org/mpesa"
-  retry_count: 3
-  safaricom:
-    auth_host: "https://api.safaricom.co.ke/oauth/v1/generate"
-    api_host: "https://api.safaricom.co.ke"
-  secret:
-    value:
-      client_key: "0pLxbN83FrOl5Nd0Fh9Zi5BQlMxSL2n5"
-      client_secret: "YzuGNoJxeub8ZC6d"
-      pass_key: "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-  LOGGING_LEVEL_ROOT: "INFO"
-  ingress:
-    enabled: false
-    annotations: 
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/strip-path: "true"
-    backend:
-      service:
-        name: ph-ee-connector-mpesa
-        port:
-          number: 80
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
-      deployTime: "{{ .Values.deployTime }}"
-
-roster_connector:
-  enabled: true
-  SPRING_PROFILES_ACTIVE: "bb"
-  image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-ams-pesa"
-  pesacore:
-    base_url: "https://qaoperations01.oneacrefund.org"
-    auth_header: "PaymentHubTest"
-  LOGGING_LEVEL_ROOT: "INFO"
-  ams:
-    local:
-      enabled: true
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
-      deployTime: "{{ .Values.deployTime }}"
-
-notifications:
-  enabled: true
-  SPRING_PROFILES_ACTIVE: "bb"
-  image: "oaftech.azurecr.io/phee-ns/ph-ee-notifications:1.0.0"
-  hostname: "paymenthub.qa.oneacrefund.org"
-  zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
-  MESSAGEGATEWAYCONFIG_HOST: "message-gateway"
-  NOTIFICATION_LOCAL_HOST: "ph-ee-connector-notifications"
-  NOTIFICATION_SUCCESS_ENABLED: "false"
-  NOTIFICATION_FAILURE_ENABLED: "true"
-  LOGGING_LEVEL_ROOT: "INFO"
-  ingress:
-    enabled: false
-    annotations: 
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/strip-path: "true"
-    backend:
-      service:
-        name: ph-ee-connector-notifications
-        port:
-          number: 80
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
-      deployTime: "{{ .Values.deployTime }}"
+  messagegateway:
+    enabled: true
+    image: "oaftech.azurecr.io/phee-ns/message-gateway"
+    secret:
+      value:
+        api_key: "eKiC1_JWdKy7eaTGQFHxXXjXjacr60W9Zntl"
+        project_id: "PJ5ff552ce01d2978c"
+    hostname: "paymenthub.qa.oneacrefund.org"
+    CALLBACKCONFIG_HOST: "ph-ee-connector-notifications"
+    HOSTCONFIG_HOST: "message-gateway"
+    MYSQL_USERNAME: "mifos"
+    MYSQL_PASSWORD: "password"
+    DATASOURCE_URL: jdbc:mysql:thin://operationsmysql:3306/messagegateway
+    PROVIDERSOURCE_FROMDATABASE: "disabled"
+    PROVIDERSOURCE_FROMYML: "enabled"
+    LOGGING_LEVEL_ROOT: "INFO"
+    ingress:
+      enabled: false
+      annotations: 
+        kubernetes.io/ingress.class: "kong"
+        konghq.com/strip-path: "true"
+      backend:
+        service:
+          name: message-gateway
+          port:
+            number: 80
+    deployment:
+      annotations:
+        co.elastic.logs/enabled: "true"
 
 
-zeebe_ops:
-  enabled: false
-  image: "oaftech.azurecr.io/phee-ns/phee-zeebe-ops"
-  hostname: "paymenthub.qa.oneacrefund.org"
-  zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
-  ingress:
-    enabled: false
-    annotations: 
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/strip-path: "true"
-    backend:
-      service:
-        name: ph-ee-zeebe-ops
-        port:
-          number: 80
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
-      deployTime: "{{ .Values.deployTime }}"
+  importer_es:
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-es"
 
-messagegateway:
-  enabled: true
-  image: "oaftech.azurecr.io/phee-ns/message-gateway"
-  secret:
-    value:
-      api_key: "eKiC1_JWdKy7eaTGQFHxXXjXjacr60W9Zntl"
-      project_id: "PJ5ff552ce01d2978c"
-  hostname: "paymenthub.qa.oneacrefund.org"
-  CALLBACKCONFIG_HOST: "ph-ee-connector-notifications"
-  HOSTCONFIG_HOST: "message-gateway"
-  MYSQL_USERNAME: "mifos"
-  MYSQL_PASSWORD: "password"
-  DATASOURCE_URL: jdbc:mysql:thin://operationsmysql:3306/messagegateway
-  PROVIDERSOURCE_FROMDATABASE: "disabled"
-  PROVIDERSOURCE_FROMYML: "enabled"
-  LOGGING_LEVEL_ROOT: "INFO"
-  ingress:
-    enabled: false
-    annotations: 
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/strip-path: "true"
-    backend:
-      service:
-        name: message-gateway
-        port:
-          number: 80
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
+  importer_rdbms:
+    enabled: true
+    image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-rdbms"
+    LOGGING_LEVEL_ROOT: "INFO"
+    datasource:
+      username: "mifos"
+      password: "password"
+      host: "operationsmysql"
+      port: 3306
+      schema: "tenants"
+    deployment:
+      annotations:
+        co.elastic.logs/enabled: "true"
 
+  wildcardhostname: "*.test.oneacrefund.org"
 
-importer_es:
-  image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-es"
-
-importer_rdbms:
-  enabled: true
-  image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-rdbms"
-  LOGGING_LEVEL_ROOT: "INFO"
-  datasource:
-    username: "mifos"
-    password: "password"
-    host: "operationsmysql"
-    port: 3306
-    schema: "tenants"
-  deployment:
-    annotations:
-      co.elastic.logs/enabled: "true"
-
-wildcardhostname: "*.test.oneacrefund.org"
-
-tls: "oafqa-tls"
+  tls: "oafqa-tls"
