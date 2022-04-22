@@ -515,6 +515,8 @@ operations_app:
       annotations:
         co.elastic.logs/enabled: "true"
         deployTime: "{{ .Values.deployTime }}"
+    skip:
+      enabled: true
 
   roster_connector:
     enabled: true

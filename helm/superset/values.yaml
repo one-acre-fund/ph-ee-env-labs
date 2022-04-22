@@ -379,6 +379,7 @@ ph-ee-engine:
     enabled: true
     image: "us.icr.io/phee-ns/phee-connector-ams-paygops"
     SPRING_PROFILES_ACTIVE: "bb"
+    LOGGING_LEVEL_ROOT: "INFO"
     ams:
       local:
         enabled: false
