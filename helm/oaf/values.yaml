@@ -566,6 +566,7 @@ operations_app:
     image: "oaftech.azurecr.io/phee-ns/phee-zeebe-ops"
     hostname: "paymenthub.qa.oneacrefund.org"
     zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
+    elasticsearch_contactpoint: "elasticsearch:9200"
     ingress:
       enabled: false
       annotations: 
