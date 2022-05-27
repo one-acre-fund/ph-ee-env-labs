@@ -179,6 +179,12 @@ ph-ee-engine:
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "channel.ibank.financial"
     DFSPIDS: "ibank-usa,ibank-india"
+    ams:
+      groups:
+        - identifier: "ACCOUNTID"
+          value: "paygops"
+        - identifier: "FOUNDATIONALID"
+          value: "roster"
     limits:
       cpu: "500m"
       memory: "512M"
@@ -365,6 +371,23 @@ ph-ee-engine:
     requests:
       cpu: "100m"
       memory: "256M"
+    deployment:
+      annotations:
+        deployTime: "{{ .Values.deployTime }}"
+
+  paygops_connector:
+    enabled: true
+    image: "us.icr.io/phee-ns/phee-connector-ams-paygops"
+    SPRING_PROFILES_ACTIVE: "bb"
+    ams:
+      local:
+        enabled: false
+    paygops:
+      auth_header: "PaymentHubTest"
+    limits:
+      cpu: "500m"
+    requests:
+      cpu: "100m"
     deployment:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
