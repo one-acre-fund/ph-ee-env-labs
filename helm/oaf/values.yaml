@@ -37,7 +37,7 @@ ph-ee-engine:
         host: "ph-ee-elasticsearch"
         clusterName: "ph-ee-elasticsearch"
     ingress:
-      enabled: true
+      enabled: false
       className: "nginx"  
       path: /
       host: ph-zeebe.qa.oneacrefund.org
@@ -49,7 +49,7 @@ ph-ee-engine:
     enabled: true
     imageTag: 7.16.3
     ingress:
-      enabled: true
+      enabled: false
       className: "nginx"
       pathtype: ImplementationSpecific
       hosts:
@@ -178,7 +178,7 @@ ph-ee-engine:
       schema: "tenants"
     LOGGING_LEVEL_ROOT: "INFO"
     ingress:
-      enabled: true
+      enabled: false
       annotations: 
         kubernetes.io/ingress.class: "kong"
         konghq.com/strip-path: "true"
@@ -199,7 +199,7 @@ ph-ee-engine:
     path: "/"
     image: "oaftech.azurecr.io/phee-ns/ops-web"
     ingress:
-      enabled: true
+      enabled: false
       annotations:
         kubernetes.io/ingress.class: "nginx"
       backend:
