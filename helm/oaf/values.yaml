@@ -399,7 +399,7 @@ ph-ee-engine:
 
   tls: "oafqa-tls"
 
-prometheusKafkaExporter:
+prometheus-kafka-exporter:
   enabled: true
   image:
     tag: v1.4.2
