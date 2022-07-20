@@ -398,3 +398,10 @@ ph-ee-engine:
   wildcardhostname: "*.qa.oneacrefund.org"
 
   tls: "oafqa-tls"
+
+prometheusKafkaExporter:
+  enabled: true
+  image:
+    tag: v1.4.2
+  kafkaServer:
+    - kafka.paymenthub:9092

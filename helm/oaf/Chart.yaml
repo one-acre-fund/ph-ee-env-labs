@@ -10,3 +10,9 @@ dependencies:
 - name: ph-ee-engine
   repository: https://fynarfin.io/images/
   version: 1.1.9-SNAPSHOT
+- name: prometheus-kafka-exporter
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 1.16.0
+  condition: prometheusKafkaExporter.enabled
+  alias: prometheusKafkaExporter
+  
