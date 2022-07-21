@@ -399,9 +399,9 @@ ph-ee-engine:
 
   tls: "oafqa-tls"
 
-prometheus-kafka-exporter:
-  enabled: true
-  image:
-    tag: v1.4.2
-  kafkaServer:
-    - kafka.paymenthub:9092
+# prometheus-kafka-exporter:
+#   enabled: true
+#   image:
+#     tag: v1.4.2
+#   kafkaServer:
+#     - kafka.paymenthub:9092
