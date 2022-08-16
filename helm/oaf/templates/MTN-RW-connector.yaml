@@ -4,22 +4,22 @@
 apiVersion: {{ .Values.deployment.apiversion }}
 kind: Deployment
 metadata:
-  name: "mtn-rwanda-connector"
+  name: "mtn-rw-connector"
   labels:
-    app: mtn-rwanda-connector
+    app: mtn-rw-connector
 spec:
   replicas: {{ .Values.mtn_rwanda_connector.replicas }}
   selector:
     matchLabels:
-      app: mtn-rwanda-connector
+      app: mtn-rw-connector
   template:
     metadata:
       labels:
-        app: mtn-rwanda-connector
+        app: mtn-rw-connector
       annotations:
     spec:
       containers:
-        - name: mtn-rwanda-connector
+        - name: mtn-rw-connector
           image: "{{ .Values.zeebe_ops.image }}:{{ .Values.zeebe_ops.imageTag }}"
           imagePullPolicy: "{{ .Values.zeebe_ops.imagePullPolicy }}"
           resources:
@@ -63,8 +63,8 @@ apiVersion: {{ .Values.service.apiversion }}
 kind: Service
 metadata:
   labels:
-    app: mtn-rwanda-connector
-  name: mtn-rwanda-connector
+    app: mtn-rw-connector
+  name: mtn-rw-connector
 spec:
   ports:
     - name: port
@@ -72,7 +72,7 @@ spec:
       protocol: TCP
       targetPort: 5000
   selector:
-    app: mtn-rwanda-connector
+    app: mtn-rw-connector
   sessionAffinity: None
   type: ClusterIP
 {{- end}}
