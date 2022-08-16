@@ -349,16 +349,16 @@ ph-ee-engine:
 
   mtn_rwanda_connector:
     enabled: true
-    CAMEL_SERVER_PORT: 5000
-    MTNRW_CALLBACK:
-    MTNRW_SUBSCRIPTIONKEY:
-    MTNRW_ENVIRONMENT:
-    MTNRW_API_HOST:
-    MTNRW_CLIENT_SECRET:
-    MTNRW_CLIENT_KEY:
-    SPRING_PROFILES_ACTIVE: "bb"
-    MTN_MAX-RETRY_COUNT: 3
-    MTN_API_TIMEOUT: 6000
+    camel_server_port: 5000
+    mtnrw_callback:
+    mtnrw_subscriptionkey:
+    mtnrw_environment:
+    mtnrw_api_host:
+    mtnrw_client_secret:
+    mtnrw_client_key:
+    spring_profiles_active: "bb"
+    mtn_max-retry_count: 3
+    mtn_api_timeout: 6000
     replicas: 3
 
   messagegateway:

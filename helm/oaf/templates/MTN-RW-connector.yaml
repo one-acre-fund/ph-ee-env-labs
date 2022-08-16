@@ -37,27 +37,27 @@ spec:
             - name: "TENANTS"
               value: "{{ .Values.zeebe_ops.tenants }}"
             - name: "MTN_API_TIMEOUT"
-              value: "{{ .Values.mtn_rwanda_connector.MTN_API_TIMEOUT }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtn_api_timeout }}"
             - name: "MTN_MAX_RETRY-_COUNT"
-              value: "{{ .Values.mtn_rwanda_connector.MTN_MAX_RETRY_COUNT }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtn_max_retry_count }}"
             - name: "SPRING_PROFILES_ACTIVE"
-              value: "{{ .Values.mtn_rwanda_connector.SPRING_PROFILES_ACTIVE }}"
+              value: "{{ .Values.mtn_rwanda_connector.spring_profiles_active }}"
             - name: "MTNRW_AUTH_HOST"
-              value: "{{ .Values.mtn_rwanda_connector.MTNRW_AUTH_HOST }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtnrw_auth_host }}"
             - name: "MTNRW_CLIENT_KEY"
-              value: "{{ .Values.mtn_rwanda_connector.MTNRW_CLIENT_KEY }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtnrw_client_key }}"
             - name: "MTNRW_CLIENT_SECRET"
-              value: "{{ .Values.mtn_rwanda_connector.MTNRW_CLIENT_SECRET }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtnrw_client_secret }}"
             - name: "MTNRW_API_HOST"
-              value: "{{ .Values.mtn_rwanda_connector.MTNRW_API_HOST }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtnrw_api_host }}"
             - name: "MTNRW_ENVIRONMENT"
-              value: "{{ .Values.mtn_rwanda_connector.MTNRW_ENVIRONMENT }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtnrw_environmenT }}"
             - name: "MTNRW_SUBSCRIPTIONKEY"
-              value: "{{ .Values.mtn_rwanda_connector.MTNRW_SUBSCRIPTIONKEY }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtnrw_subscriptionkey }}"
             - name: "MTNRW_CALLBACK"
-              value: "{{ .Values.mtn_rwanda_connector.MTNRW_CALLBACK }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtnrw_callback }}"
             - name: "CAMEL_SERVER_PORT"
-              value: "{{ .Values.mtn_rwanda_connector.CAMEL_SERVER_PORT }}"
+              value: "{{ .Values.mtn_rwanda_connector.camel_server_port }}"
 --- 
 apiVersion: {{ .Values.service.apiversion }}
 kind: Service
@@ -75,5 +75,5 @@ spec:
     app: mtn-rwanda-connector
   sessionAffinity: None
   type: ClusterIP
-
+{{- end}}
 {{- end}} 
