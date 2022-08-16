@@ -1,4 +1,4 @@
-{{- if .Values.mtn_rwanda_connector.enabled -}}
+{{- if $.Values.mtn_rwanda_connector.enabled -}}
 {{- if .Values.zeebe_ops.enabled -}}
 
 apiVersion: {{ .Values.deployment.apiversion }}
