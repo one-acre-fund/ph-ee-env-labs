@@ -58,7 +58,7 @@ spec:
               value: "{{ .Values.mtn_rwanda_connector.MTNRW_CALLBACK }}"
             - name: "CAMEL_SERVER_PORT"
               value: "{{ .Values.mtn_rwanda_connector.CAMEL_SERVER_PORT }}"
- 
+--- 
 apiVersion: {{ .Values.service.apiversion }}
 kind: Service
 metadata:
