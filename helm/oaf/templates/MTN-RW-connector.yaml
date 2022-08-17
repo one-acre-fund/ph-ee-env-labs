@@ -1,41 +1,48 @@
-{{- if $.Values.mtn_rwanda_connector.enabled -}}
-{{- if .Values.zeebe_ops.enabled -}}
+{{- if .Values.mtn_rwanda_connector.enabled -}}
 
-apiVersion: {{ .Values.deployment.apiversion }}
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "mtn-rw-connector"
   labels:
-    app: mtn-rw-connector
+    org.oneacrefund.project: mtn-rwanda-connector
+    org.oneacrefund.app: {{ .Release.Name }}-connector
+    org.oneacrefund.instance: {{ .Release.Name }}-connector    
 spec:
   replicas: {{ .Values.mtn_rwanda_connector.replicas }}
   selector:
     matchLabels:
-      app: mtn-rw-connector
+      org.oneacrefund.project: mtn-rwanda-connector
+      org.oneacrefund.app: {{ .Release.Name }}-connector
+      org.oneacrefund.instance: {{ .Release.Name }}-connector
   template:
     metadata:
       labels:
         app: mtn-rw-connector
       annotations:
+        # Checksum to restart pods on config updates
+        # Filebeat hints to enable log collections
+        co.elastic.logs/enabled: "true"
+        co.elastic.logs/json.keys_under_root: "true"
     spec:
       containers:
         - name: mtn-rw-connector
-          image: "{{ .Values.zeebe_ops.image }}:{{ .Values.zeebe_ops.imageTag }}"
-          imagePullPolicy: "{{ .Values.zeebe_ops.imagePullPolicy }}"
+          image: "{{ .Values.mtn_rwanda_connector.image }}:{{ .Values.mtn_rwanda_connector.imageTag }}"
+          imagePullPolicy: "{{ .Values.mtn_rwanda_connector.imagePullPolicy }}"
           resources:
             limits:
-              memory: "{{ .Values.zeebe_ops.limits.memory }}"
-              cpu: "{{ .Values.zeebe_ops.limits.cpu }}"
+              memory: "{{ .Values.mtn_rwanda_connector.deployment.resources.limits.memory }}"
+              cpu: "{{ .Values.mtn_rwanda_connector.deployment.resources.limits.cpu }}"
             requests:
-              memory: "{{ .Values.zeebe_ops.requests.memory }}"
-              cpu: "{{ .Values.zeebe_ops.requests.cpu }}"
+              memory: "{{ .Values.mtn_rwanda_connector.deployment.resources.requests.memory }}"
+              cpu: "{{ .Values.mtn_rwanda_connector.deployment.resources.requests.cpu }}"
           ports:
             - containerPort: 5000
           env:
             - name: "ZEEBE_BROKER_CONTACTPOINT"
-              value: "{{ .Values.zeebe_ops.zeebe_broker_contactpoint }}"
+              value: "{{ .Values.mtn_rwanda_connector.zeebe_broker_contactpoint }}"
             - name: "TENANTS"
-              value: "{{ .Values.zeebe_ops.tenants }}"
+              value: "{{ .Values.mtn_rwanda_connector.tenants }}"
             - name: "MTN_API_TIMEOUT"
               value: "{{ .Values.mtn_rwanda_connector.mtn_api_timeout }}"
             - name: "MTN_MAX_RETRY-_COUNT"
@@ -59,11 +66,14 @@ spec:
             - name: "CAMEL_SERVER_PORT"
               value: "{{ .Values.mtn_rwanda_connector.camel_server_port }}"
 --- 
-apiVersion: {{ .Values.service.apiversion }}
+apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: mtn-rw-connector
+    org.oneacrefund.project: mtn-rwanda-connector
+    org.oneacrefund.project: {{ .Release.Name }}-autosave
+    org.oneacrefund.app: {{ .Release.Name }}-autosave
+
   name: mtn-rw-connector
 spec:
   ports:
@@ -72,8 +82,9 @@ spec:
       protocol: TCP
       targetPort: 5000
   selector:
-    app: mtn-rw-connector
+    org.oneacrefund.instance: {{ .Release.Name }}-autosave
+    org.oneacrefund.project: mtn-rwanda-connector
+    org.oneacrefund.app: {{ .Release.Name }}-autosave
   sessionAffinity: None
   type: ClusterIP
 {{- end}}
-{{- end}} 

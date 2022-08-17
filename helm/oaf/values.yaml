@@ -1,3 +1,28 @@
+mtn_rwanda_connector:
+  enabled: true
+  tenants: "oaf"
+  zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
+  camel_server_port: 5000
+  mtnrw_callback:
+  mtnrw_subscriptionkey:
+  mtnrw_environment:
+  mtnrw_api_host:
+  mtnrw_client_secret:
+  mtnrw_client_key:
+  spring_profiles_active: "bb"
+  mtn_max-retry_count: 3
+  mtn_api_timeout: 6000
+  deployment:
+    resources:
+      limits:
+        memory: 1000m
+        cpu: 2
+      requests:
+        memory: 500m
+        cpu: 1
+  replicas: 3
+  
+  
 ph-ee-engine:  
   zeebe:
     broker:
@@ -27,6 +52,7 @@ ph-ee-engine:
         volumeMounts:
         - name: exporters
           mountPath: /exporters/
+
   zeebe-operate-helm:
     enabled: false
     image:
@@ -347,19 +373,7 @@ ph-ee-engine:
         co.elastic.logs/enabled: "true"
         deployTime: "{{ .Values.deployTime }}"
 
-  mtn_rwanda_connector:
-    enabled: true
-    camel_server_port: 5000
-    mtnrw_callback:
-    mtnrw_subscriptionkey:
-    mtnrw_environment:
-    mtnrw_api_host:
-    mtnrw_client_secret:
-    mtnrw_client_key:
-    spring_profiles_active: "bb"
-    mtn_max-retry_count: 3
-    mtn_api_timeout: 6000
-    replicas: 3
+
 
   messagegateway:
     enabled: true
