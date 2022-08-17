@@ -18,8 +18,13 @@ spec:
   template:
     metadata:
       labels:
-        app: mtn-rw-connector
+        org.oneacrefund.project: mtn-rwanda-connector
+        org.oneacrefund.app: {{ .Release.Name }}-connector
+        org.oneacrefund.instance: {{ .Release.Name }}-connector
       annotations:
+{{- if .Values.mtn_rwanda_connector.deployment.annotations }}
+{{ toYaml .Values.mtn_rwanda_connector.deployment.annotations | indent 8 }}
+{{- end }}
         # Checksum to restart pods on config updates
         # Filebeat hints to enable log collections
         co.elastic.logs/enabled: "true"

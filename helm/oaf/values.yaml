@@ -13,14 +13,17 @@ mtn_rwanda_connector:
   mtn_max-retry_count: 3
   mtn_api_timeout: 6000
   deployment:
+    annotations: {}
     resources:
       limits:
-        memory: 1000m
-        cpu: 2
+        memory: 128mi
+        cpu: 100m
       requests:
-        memory: 500m
-        cpu: 1
+        memory: 128mi
+        cpu: 100m
   replicas: 3
+  env: 
+    
   
   
 ph-ee-engine:  
