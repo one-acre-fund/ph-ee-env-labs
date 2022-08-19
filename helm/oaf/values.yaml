@@ -17,10 +17,10 @@ mtn_rwanda_connector:
     annotations: {}
     resources:
       limits:
-        memory: 128mi
-        cpu: 100m
+        memory: 256Mi
+        cpu: 200m
       requests:
-        memory: 128mi
+        memory: 128Mi
         cpu: 100m
   replicas: 3
   env: 
