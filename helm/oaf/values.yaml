@@ -6,7 +6,8 @@ mtn_rwanda_connector:
   mtnrw_callback:
   mtnrw_subscriptionkey:
   mtnrw_environment:
-  mtnrw_api_host:
+  mtnrw_api_host: 
+  mtnrw_auth_host: 
   mtnrw_client_secret:
   mtnrw_client_key:
   spring_profiles_active: "bb"
@@ -23,9 +24,7 @@ mtn_rwanda_connector:
         cpu: 100m
   replicas: 3
   env: 
-    
-  
-  
+
 ph-ee-engine:  
   zeebe:
     broker:
