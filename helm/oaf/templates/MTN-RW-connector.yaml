@@ -76,7 +76,7 @@ kind: Service
 metadata:
   labels:
     org.oneacrefund.project: mtn-rwanda-connector
-    org.oneacrefund.project: {{ .Release.Name }}-autosave
+    org.oneacrefund.instance: {{ .Release.Name }}-autosave
     org.oneacrefund.app: {{ .Release.Name }}-autosave
 
   name: mtn-rw-connector
