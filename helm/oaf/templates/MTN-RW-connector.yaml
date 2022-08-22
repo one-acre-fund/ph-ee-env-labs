@@ -87,9 +87,9 @@ spec:
       protocol: TCP
       targetPort: 5000
   selector:
-    org.oneacrefund.instance: {{ .Release.Name }}-autosave
+    org.oneacrefund.instance: {{ .Release.Name }}-connector
     org.oneacrefund.project: mtn-rwanda-connector
-    org.oneacrefund.app: {{ .Release.Name }}-autosave
+    org.oneacrefund.instance: {{ .Release.Name }}-connector  
   sessionAffinity: None
   type: ClusterIP
 {{- end}}
