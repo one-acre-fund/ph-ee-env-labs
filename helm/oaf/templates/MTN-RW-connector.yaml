@@ -89,7 +89,7 @@ spec:
   selector:
     org.oneacrefund.instance: {{ .Release.Name }}-connector
     org.oneacrefund.project: mtn-rwanda-connector
-    org.oneacrefund.instance: {{ .Release.Name }}-connector  
+    org.oneacrefund.app: {{ .Release.Name }}-connector  
   sessionAffinity: None
   type: ClusterIP
 {{- end}}
