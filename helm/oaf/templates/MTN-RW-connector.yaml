@@ -50,7 +50,7 @@ spec:
               value: "{{ .Values.mtn_rwanda_connector.tenants }}"
             - name: "MTN_API_TIMEOUT"
               value: "{{ .Values.mtn_rwanda_connector.mtn_api_timeout }}"
-            - name: "MTN_MAX_RETRY-_COUNT"
+            - name: "MTN_MAX_RETRY_COUNT"
               value: "{{ .Values.mtn_rwanda_connector.mtn_max_retry_count }}"
             - name: "SPRING_PROFILES_ACTIVE"
               value: "{{ .Values.mtn_rwanda_connector.spring_profiles_active }}"
