@@ -63,7 +63,7 @@ spec:
             - name: "MTNRW_API_HOST"
               value: "{{ .Values.mtn_rwanda_connector.mtnrw_api_host }}"
             - name: "MTNRW_ENVIRONMENT"
-              value: "{{ .Values.mtn_rwanda_connector.mtnrw_environmenT }}"
+              value: "{{ .Values.mtn_rwanda_connector.mtnrw_environment}}"
             - name: "MTNRW_SUBSCRIPTIONKEY"
               value: "{{ .Values.mtn_rwanda_connector.mtnrw_subscriptionkey }}"
             - name: "MTNRW_CALLBACK"
