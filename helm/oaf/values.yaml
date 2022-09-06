@@ -22,7 +22,7 @@ mtn_rwanda_connector:
       requests:
         memory: 128Mi
         cpu: 100m
-  replicas: 3
+  replicas: 1
   env: 
 
 ph-ee-engine:  
