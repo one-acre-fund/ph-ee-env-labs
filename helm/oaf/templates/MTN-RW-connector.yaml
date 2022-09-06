@@ -1,3 +1,5 @@
+## Helm template to deploy mtnRwanda connector
+
 {{- if .Values.mtn_rwanda_connector.enabled -}}
 
 apiVersion: apps/v1
