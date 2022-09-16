@@ -3,3 +3,4 @@ charts/
 **/*.lock
 
 .DS_Store
+megalinter-reports/*
