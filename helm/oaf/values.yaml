@@ -109,7 +109,7 @@ ph-ee-engine:
           secretKeyRef:
             name: kibana
             key: encryptionkey
-            
+
     ingress:
       enabled: false
       className: "nginx"
@@ -122,9 +122,6 @@ ph-ee-engine:
         - secretName: oafqa-tls
           hosts:
             - "*.qa.oneacrefund.org"
-    kibanaConfig:
-      kibana.yml: |
-        monitoring.enabled: false
         
   elasticsearch:
     enabled: true
