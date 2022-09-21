@@ -80,7 +80,6 @@ ph-ee-engine:
     kibanaConfig:
       kibana.yml: |
         monitoring.enabled: false
-        xpack.encryptedSavedObjects.encryptionKey: 5f4dcc3b5aa765d61d8327deb882cf99
         server.ssl:
           enabled: true
           key: /usr/share/kibana/config/certs/elastic-certificate.pem
@@ -109,6 +108,10 @@ ph-ee-engine:
           secretKeyRef:
             name: kibana
             key: encryptionkey
+      - name:  KIBANA_DEFAULTAPPID
+        value: discover
+      - name:  KIBANA_PUBLIC_BASEURL
+        value: https://ph-kibana.test.oneacrefund.org
 
     ingress:
       enabled: false
