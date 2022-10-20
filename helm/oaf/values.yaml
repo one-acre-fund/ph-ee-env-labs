@@ -84,6 +84,7 @@ ph-ee-engine:
           enabled: true
           key: /usr/share/kibana/config/certs/elastic-certificate.pem
           certificate: /usr/share/kibana/config/certs/elastic-certificate.pem
+        server.publicBaseUrl: ${KIBANA_PUBLIC_BASEURL}
         xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
         elasticsearch.ssl:
           certificateAuthorities: /usr/share/kibana/config/certs/elastic-certificate.pem
