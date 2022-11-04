@@ -17,6 +17,7 @@ steps:
 
   - script: |
       # Lint
+      ls $(System.DefaultWorkingDirectory) -R
       helm dependency update helm/oaf
       helm lint helm/oaf
     displayName: Helm lint
