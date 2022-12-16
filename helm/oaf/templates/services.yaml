@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ph-ee-connector-ams-roster
+  name: ph-ee-connector-ams-roster
+spec:
+  ports:
+    - name: port
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: ph-ee-connector-ams-roster
+  sessionAffinity: None
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ph-ee-connector-ams-paygops
+  name: ph-ee-connector-ams-paygops
+spec:
+  ports:
+    - name: port
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: ph-ee-connector-ams-paygops
+  sessionAffinity: None
+  type: ClusterIP
