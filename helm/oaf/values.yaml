@@ -32,10 +32,14 @@ ph-ee-engine:
   zeebe-cluster-helm:
     global:
       elasticsearch:
+        disableExporter: true
         host: "ph-ee-elasticsearch"
     image:
       repository: camunda/zeebe
       tag: 1.1.0
+
+    envTemplated:
+      ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME: "hu.dpc.rt.kafkastreamer.exporter.NoOpExporter"
 
     clusterSize: "1"
     partitionCount: "1"
@@ -54,6 +58,12 @@ ph-ee-engine:
         volumeMounts:
         - name: exporters
           mountPath: /exporters/
+
+    podAnnotations:
+      co.elastic.logs/enabled: "true"
+      co.elastic.logs/multiline.pattern: '^\d{4}-\d{2}-\d{2}\s(\d\d:){2}\d{2}.\d{3}\s'
+      co.elastic.logs/multiline.negate: "true"
+      co.elastic.logs/multiline.match: 'after'
 
   zeebe-operate-helm:
     enabled: false
@@ -132,6 +142,9 @@ ph-ee-engine:
     replicas: 1
     imageTag: 7.16.3
     minimumMasterNodes: 1
+    maxUnavailable: 0
+    volumeClaimTemplate:
+      accessModes: [ "ReadWriteOnce" ]
     esConfig:
       elasticsearch.yml: |
         xpack.security.enabled: true
@@ -229,6 +242,8 @@ ph-ee-engine:
     AWS_ACCESS_KEY: "xxx"
     AWS_SECRET_KEY: "xxx"
     image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-channel"
+    imageTag: "v1.1.1"
+    imagePullPolicy: Always
     ingress:
       enabled: false
       annotations: 
@@ -256,6 +271,8 @@ ph-ee-engine:
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "paymenthub.qa.oneacrefund.org"
     image: "oaftech.azurecr.io/phee-ns/ph-ee-operations-app"
+    imagePullPolicy: IfNotPresent
+    imageTag: "v1.0.6"
     datasource:
       username: "mifos"
       password: "password"
@@ -284,6 +301,8 @@ ph-ee-engine:
     webhost: "ph-web.qa.oneacrefund.org"
     path: "/"
     image: "oaftech.azurecr.io/phee-ns/ops-web"
+    imageTag: "v1.2.0"
+    imagePullPolicy: IfNotPresent
     ingress:
       enabled: false
       annotations:
@@ -296,6 +315,10 @@ ph-ee-engine:
     deployment:
       annotations:
         co.elastic.logs/enabled: "true"
+        co.elastic.logs/multiline.pattern: '^(\d\d:){2}\d{2}.\d{3}\s'
+        co.elastic.logs/multiline.negate: 'true'
+        co.elastic.logs/multiline.match: after
+        deployTime: "{{ .Values.deployTime }}"
 
   identity:
     hostname: "ops-bk.ibank.financial"
@@ -306,15 +329,20 @@ ph-ee-engine:
         konghq.com/strip-path: "true"
 
   mpesa:
+    skip:
+      enabled: false
     tenant: "oaf"
     enabled: true
     SPRING_PROFILES_ACTIVE: "bb"
     hostname: "paymenthub.qa.oneacrefund.org"
     image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-mpesa"
+    imageTag: "v1.2.1"
+    imagePullPolicy: IfNotPresent
     zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
     callback_host: "https://paymenthub.qa.oneacrefund.org/mpesa"
     retry_count: 3
     api_timeout: 60000
+    zeebe_init_transfer_wait_timer: 15
     accounts:
       roster:
         name: "roster"
@@ -348,14 +376,17 @@ ph-ee-engine:
     deployment:
       annotations:
         co.elastic.logs/enabled: "true"
+        co.elastic.logs/multiline.pattern: '^\d{4}-\d{2}-\d{2}\s(\d\d:){2}\d{2}.\d{3}\s'
+        co.elastic.logs/multiline.negate: 'true'
+        co.elastic.logs/multiline.match: after
         deployTime: "{{ .Values.deployTime }}"
-    skip:
-      enabled: true
 
   roster_connector:
     enabled: true
     SPRING_PROFILES_ACTIVE: "bb"
     image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-ams-pesa"
+    imageTag: "v1.0.3"
+    imagePullPolicy: IfNotPresent
     pesacore:
       base_url: "https://qaoperations01.oneacrefund.org"
       auth_header: "PaymentHubTest"
@@ -366,12 +397,17 @@ ph-ee-engine:
     deployment:
       annotations:
         co.elastic.logs/enabled: "true"
+        co.elastic.logs/multiline.pattern: '^\d{4}-\d{2}-\d{2}\s(\d\d:){2}\d{2}.\d{3}\s'
+        co.elastic.logs/multiline.negate: 'true'
+        co.elastic.logs/multiline.match: after
         deployTime: "{{ .Values.deployTime }}"
 
   paygops_connector:
     enabled: true
     SPRING_PROFILES_ACTIVE: "bb"
     image: "oaftech.azurecr.io/phee-ns/ph-ee-connector-ams-paygops"
+    imageTag: "v1.2.3"
+    imagePullPolicy: IfNotPresent
     paygops:
       base_url: "https://feature-test1.paygops.com/"
       authheader: "PaymentHubTest"
@@ -388,6 +424,8 @@ ph-ee-engine:
     enabled: true
     SPRING_PROFILES_ACTIVE: "bb"
     image: "oaftech.azurecr.io/phee-ns/ph-ee-notifications"
+    imagePullPolicy: IfNotPresent
+    imageTag: "v1.0.1"
     hostname: "paymenthub.qa.oneacrefund.org"
     zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
     MESSAGEGATEWAYCONFIG_HOST: "message-gateway"
@@ -407,13 +445,18 @@ ph-ee-engine:
             number: 80
     deployment:
       annotations:
-        co.elastic.logs/enabled: "true"
+        co.elastic.logs/enabled: "false"
+        co.elastic.logs/multiline.pattern: '^\d{4}-\d{2}-\d{2}\s(\d\d:){2}\d{2}.\d{3}\s'
+        co.elastic.logs/multiline.negate: 'true'
+        co.elastic.logs/multiline.match: after
         deployTime: "{{ .Values.deployTime }}"
 
 
   zeebe_ops:
     enabled: true
     image: "oaftech.azurecr.io/phee-ns/phee-zeebe-ops"
+    imageTag: "v1.0.2"
+    imagePullPolicy: IfNotPresent
     hostname: "paymenthub.qa.oneacrefund.org"
     zeebe_broker_contactpoint: "zeebe-zeebe-gateway:26500"
     elasticsearch_contactpoint: "ph-ee-elasticsearch:9200"
@@ -436,7 +479,9 @@ ph-ee-engine:
 
   messagegateway:
     enabled: true
-    image: "oaftech.azurecr.io/phee-ns/message-gateway"
+    image: oaftech.azurecr.io/phee-ns/message-gateway
+    imageTag: "v1.0.0"
+    imagePullPolicy: IfNotPresent
     secret:
       value:
         api_key: "eKiC1_JWdKy7eaTGQFHxXXjXjacr60W9Zntl"
@@ -463,14 +508,41 @@ ph-ee-engine:
     deployment:
       annotations:
         co.elastic.logs/enabled: "true"
+        co.elastic.logs/multiline.pattern: '^\d{4}-\d{2}-\d{2}\s(\d\d:){2}\d{2}.\d{3}\s'
+        co.elastic.logs/multiline.negate: 'true'
+        co.elastic.logs/multiline.match: after
+        deployTime: "{{ .Values.deployTime }}"
 
 
   importer_es:
     image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-es"
+    imageTag: "v1.2.4"
+    imagePullPolicy: IfNotPresent
+    reporting:
+      enabled: "true"
+      fields:
+        transferSettlementFailed : true
+        transactionFailed : true
+        transferCreateFailed : true
+        partyLookupFailed : true
+        amount: true
+        accountId: true
+        errorDescription: true
+        externalId: true
+        phoneNumber: true
+        processInstanceKey: true
+        timestamp: true
+    elasticsearch_security_enabled: "true"
+    elasticsearch_sslverification: "true"
+    logging:
+      level:
+         root: INFO
 
   importer_rdbms:
     enabled: true
     image: "oaftech.azurecr.io/phee-ns/ph-ee-importer-rdbms"
+    imageTag: "v1.0.8"
+    imagePullPolicy: IfNotPresent
     LOGGING_LEVEL_ROOT: "INFO"
     datasource:
       username: "mifos"
@@ -481,6 +553,10 @@ ph-ee-engine:
     deployment:
       annotations:
         co.elastic.logs/enabled: "true"
+        co.elastic.logs/multiline.pattern: '^(\d\d:){2}\d{2}.\d{3}\s'
+        co.elastic.logs/multiline.negate: 'true'
+        co.elastic.logs/multiline.match: after
+        deployTime: "{{ .Values.deployTime }}"
   
   wildcardhostname: "*.qa.oneacrefund.org"
 
